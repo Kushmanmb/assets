@@ -131,18 +131,14 @@ func ValidateLinks(links []Link) error {
 
 	seen := make(map[string]bool)
 	for _, l := range links {
-		if l.Name != nil {
-			if seen[*l.Name] {
-				return fmt.Errorf("duplicate link name: %s", *l.Name)
-			}
-			seen[*l.Name] = true
-		}
-	}
-
-	for _, l := range links {
 		if l.Name == nil || l.URL == nil {
 			return fmt.Errorf("%w: missing required fields links.url and links.name", validation.ErrMissingField)
 		}
+
+		if seen[*l.Name] {
+			return fmt.Errorf("duplicate link name: %s", *l.Name)
+		}
+		seen[*l.Name] = true
 
 		if !linkNameAllowed(*l.Name) {
 			return fmt.Errorf("invalid value for links.name filed, allowed only: %s",
